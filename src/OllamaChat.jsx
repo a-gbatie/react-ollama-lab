@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Ollama from "ollama";
 import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+// import remarkGfm from "remark-gfm";
 
 export default function OllamaChat() {
   // TODO: Add state for input, messages, loading, and error.
@@ -41,7 +41,7 @@ export default function OllamaChat() {
       });
 
       setMessages((prevMessages) => [...prevMessages, response.message]);
-    } catch (err) {
+    } catch {
       setError("Failed to get response from Ollama. Please try again.");
     } finally {
       setLoading(false);
