@@ -54,6 +54,9 @@ export default function OllamaChat() {
 
   const clearChat = () => {
     // TODO: Clear messages, input, and error.
+    setMessages([]);
+    setInput("");
+    setError(null);
   };
 
   return (
@@ -100,6 +103,7 @@ export default function OllamaChat() {
           <button
             className="chat-button chat-button-secondary"
             onClick={clearChat}
+            disabled={messages.length === 0 || loading}
           >
             Clear thread
           </button>
