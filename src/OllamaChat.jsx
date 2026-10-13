@@ -5,6 +5,10 @@ import remarkGfm from "remark-gfm";
 
 export default function OllamaChat() {
   // TODO: Add state for input, messages, loading, and error.
+  const [input, setInput] = useState("");
+  const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleAsk = async () => {
     // TODO: Prevent empty submissions and duplicate submissions while loading.
@@ -16,6 +20,35 @@ export default function OllamaChat() {
     // TODO: Show a helpful error if the request fails.
     // TODO: Turn loading off after success or failure.
   };
+
+  async function handleSend() {
+    const prompt = input.trim();
+
+    if (!prompt || loading) {
+      return;
+    }
+
+    const userMessage = { role: "user", content: prompt };
+   
+    const updatedMessages = [...messages, userMessage];
+    setMessages(updatedMessages);
+    setInput("");
+    setError(null);
+    setLoading(true);
+
+    try {
+      const response = await Ollama.chat({
+        model: "llama3.2",
+        messages: updatedMessages,
+      });
+
+      setMessages((prevMessages) => [...prevMessages, response.message,]);
+    } catch (err) {
+      setError("An error occurred while processing your request. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   const clearChat = () => {
     // TODO: Clear messages, input, and error.
@@ -46,13 +79,19 @@ export default function OllamaChat() {
             rows="5"
             className="chat-textarea"
             placeholder="Ask about benefits, PTO, or workplace policies..."
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
           />
         </div>
 
         {/* TODO: Configure buttons */}
         <div className="chat-actions">
-          <button className="chat-button">Send</button>
-          <button className="chat-button chat-button-secondary">Clear thread</button>
+          <button className="chat-button" disabled={!input.trim() || loading} onClick={handleSend}>
+            Send
+          </button>
+          <button className="chat-button chat-button-secondary" onClick={clearChat}>
+            Clear thread
+          </button>
         </div>
 
         <div className="message-list" aria-label="Conversation thread">
