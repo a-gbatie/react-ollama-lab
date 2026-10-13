@@ -29,7 +29,7 @@ export default function OllamaChat() {
     }
 
     const userMessage = { role: "user", content: prompt };
-   
+
     const updatedMessages = [...messages, userMessage];
     setMessages(updatedMessages);
     setInput("");
@@ -42,9 +42,11 @@ export default function OllamaChat() {
         messages: updatedMessages,
       });
 
-      setMessages((prevMessages) => [...prevMessages, response.message,]);
+      setMessages((prevMessages) => [...prevMessages, response.message]);
     } catch (err) {
-      setError("An error occurred while processing your request. Please try again.");
+      setError(
+        "An error occurred while processing your request. Please try again.",
+      );
     } finally {
       setLoading(false);
     }
@@ -60,13 +62,15 @@ export default function OllamaChat() {
         <header className="chat-header">
           <h1>HR Help Assistant</h1>
           <p>
-            Build a local AI chatbot prototype that helps employees ask general HR questions.
+            Build a local AI chatbot prototype that helps employees ask general
+            HR questions.
           </p>
         </header>
 
         <p className="chat-guidance">
-          Ask about general HR topics such as benefits, time off, policies, or workplace procedures.
-          Do not enter private, sensitive, or personal information.
+          Ask about general HR topics such as benefits, time off, policies, or
+          workplace procedures. Do not enter private, sensitive, or personal
+          information.
         </p>
 
         <div className="chat-input-area">
@@ -86,18 +90,36 @@ export default function OllamaChat() {
 
         {/* TODO: Configure buttons */}
         <div className="chat-actions">
-          <button className="chat-button" disabled={!input.trim() || loading} onClick={handleSend}>
+          <button
+            className="chat-button"
+            disabled={!input.trim() || loading}
+            onClick={handleSend}
+          >
             Send
           </button>
-          <button className="chat-button chat-button-secondary" onClick={clearChat}>
+          <button
+            className="chat-button chat-button-secondary"
+            onClick={clearChat}
+          >
             Clear thread
           </button>
         </div>
 
         <div className="message-list" aria-label="Conversation thread">
-          {/* TODO: Render user and assistant messages here. */}
+          {messages.map((message, idx) => (
+            <div key={idx} className="chat-message">
+              <strong>{message.role === "user" ? "You" : "Assistant"}</strong>
+              <p>{message.content}</p>
+            </div>
+          ))}
           {/* TODO: Render a temporary Assistant / Thinking... message while loading. */}
+          {loading && <p>Assistant: Thinking...</p>}
         </div>
+        {error && (
+          <p role="alert" className="chat-error">
+            {error}
+          </p>
+        )}
       </div>
     </section>
   );
