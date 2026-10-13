@@ -19,9 +19,7 @@ export default function OllamaChat() {
     // TODO: Add the assistant response to the message thread.
     // TODO: Show a helpful error if the request fails.
     // TODO: Turn loading off after success or failure.
-  };
 
-  async function handleSend() {
     const prompt = input.trim();
 
     if (!prompt || loading) {
@@ -44,9 +42,7 @@ export default function OllamaChat() {
 
       setMessages((prevMessages) => [...prevMessages, response.message]);
     } catch (err) {
-      setError(
-        "An error occurred while processing your request. Please try again.",
-      );
+      setError("Failed to get response from Ollama. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -58,7 +54,7 @@ export default function OllamaChat() {
     setInput("");
     setError(null);
   };
-
+    
   return (
     <section className="chat-shell">
       <div className="chat-card">
@@ -96,7 +92,7 @@ export default function OllamaChat() {
           <button
             className="chat-button"
             disabled={!input.trim() || loading}
-            onClick={handleSend}
+            onClick={handleAsk}
           >
             Send
           </button>
@@ -111,10 +107,16 @@ export default function OllamaChat() {
 
         <div className="message-list" aria-label="Conversation thread">
           {messages.map((message, idx) => (
-            <div key={idx} className="chat-message">
+            <article key={idx} className="chat-message">
               <strong>{message.role === "user" ? "You" : "Assistant"}</strong>
-              <p>{message.content}</p>
-            </div>
+              <div className="message-content">
+                {message.role === "assistant" ? (
+                  <ReactMarkdown>{message.content}</ReactMarkdown>
+                ) : (
+                  <p>{message.content}</p>
+                )}
+              </div>
+            </article>
           ))}
           {/* TODO: Render a temporary Assistant / Thinking... message while loading. */}
           {loading && <p>Assistant: Thinking...</p>}
@@ -127,4 +129,4 @@ export default function OllamaChat() {
       </div>
     </section>
   );
-}
+};
